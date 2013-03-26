@@ -13,12 +13,16 @@ alias -- -="cd -"
 
 # List dir contents aliases
 # ref: http://ss64.com/osx/ls.html
+
 # Long form no user group, color
 alias l="ls -oG"
+
 # Order by last modified, long form no user group, color
 alias lt="ls -toG"
+
 # List all except . and ..., color, mark file types, long form no user group, file size
 alias la="ls -AGFoh"
+
 # List all except . and ..., color, mark file types, long form no use group, order by last modified, file size
 alias lat="ls -AGFoth"
 
@@ -46,3 +50,26 @@ alias hidedotfiles="defaults write com.apple.finder AppleShowAllFiles -bool fals
 # Hide/show all desktop icons (useful when presenting)
 alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+
+# Edit your dotfiles like a ninja
+alias ninja="subl -w ~/.dotfiles && source ~/.bash_profile"
+
+# Glass Dock
+alias noglassdock="defaults write com.apple.dock no-glass -boolean YES && killall Dock"
+alias glassdock="defaults write com.apple.dock no-glass -boolean NO && killall Dock"
+
+# Gitless git
+alias pull="git pull"
+alias add="git add ."
+alias push="git push"
+alias commit="git commit"
+alias checkout="git checkout"
+
+# Shortcut for Compass watch
+alias watch="compass watch"
+
+# Shortcut for GEmset
+alias gemset="rvm gemset"
+
+# Quick bash profile editing and sourcing
+alias ninja="subl -w ~/.bash_profile && source ~/.bash_profile"

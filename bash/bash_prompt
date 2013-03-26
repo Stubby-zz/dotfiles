@@ -41,6 +41,18 @@ style_path="\[${RESET}${SOLAR_GREEN}\]"
 style_chars="\[${RESET}${SOLAR_WHITE}\]"
 style_branch="${SOLAR_CYAN}"
 
+
+STUBBY_LIGHT_BLUE="\[\033[1;34m\]"
+STUBBY_BLUE="\[\033[0;34m\]"
+STUBBY_RED="\[\033[0;31m\]"
+STUBBY_LIGHT_RED="\[\033[1;31m\]"
+STUBBY_GREEN="\[\033[0;32m\]"
+STUBBY_LIGHT_GREEN="\[\033[1;32m\]"
+STUBBY_WHITE="\[\033[1;37m\]"
+STUBBY_LIGHT_GRAY="\[\033[0;37m\]"
+STUBBY_BLACK="\[\033[0;30m\]"
+STUBBY_NONE="\[\033[0m\]" 
+
 if [[ "$SSH_TTY" ]]; then
     # connected via ssh
     style_host="\[${BOLD}${SOLAR_RED}\]"
@@ -82,44 +94,45 @@ prompt_git() {
 
     # Check for uncommitted changes in the index
     if ! $(git diff --quiet --ignore-submodules --cached); then
-        uc="+"
+        uc="💡"
     fi
 
     # Check for unstaged changes
     if ! $(git diff-files --quiet --ignore-submodules --); then
-        us="!"
+        us="💣"
     fi
 
     # Check for untracked files
     if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-        ut="?"
+        ut="📝"
     fi
 
     # Check for stashed files
     if $(git rev-parse --verify refs/stash &>/dev/null); then
-        st="$"
+        st="📦"
     fi
 
     git_state=$uc$us$ut$st
 
     # Combine the branch name and state information
     if [[ $git_state ]]; then
-        git_info="$git_info[$git_state]"
+        git_info="$git_info$git_state "
     fi
 
-    printf "${SOLAR_WHITE} on ${style_branch}${git_info}"
+    printf "${git_info}"
 }
 
-
-# Set the terminal title to the current working directory
-PS1="\[\033]0;\w\007\]"
-# Build the prompt
-PS1+="\n" # Newline
-PS1+="${style_user}\u" # Username
-PS1+="${style_chars}@" # @
-PS1+="${style_host}\h" # Host
-PS1+="${style_chars}: " # :
-PS1+="${style_path}\w" # Working directory
-PS1+="\$(prompt_git)" # Git details
-PS1+="\n" # Newline
-PS1+="${style_chars}\$ \[${RESET}\]" # $ (and reset color)
+function ruby_version {
+  #echo "v. $(ruby -e 'print RUBY_VERSION')"
+  local gemset=$(echo $GEM_HOME | awk -F'@' '{print $2}')
+  [ "$gemset" != "" ] && gemset=" @$gemset"
+  local version=$(echo $MY_RUBY_HOME | awk -F'-' '{print $2}')
+  [ "$version" != "" ] && version="v$version"
+  local full="$version$gemset"
+  [ "$full" != "" ] && echo "$full"
+}
+    
+PS1="$STUBBY_LIGHT_BLUE[$STUBBY_LIGHT_RED\$(date +%H:%M)$STUBBY_LIGHT_BLUE]" # Time
+PS1+="$STUBBY_LIGHT_BLUE[$STUBBY_WHITE\W$STUBBY_LIGHT_BLUE]"                 # Working Direcotry
+PS1+="[$STUBBY_WHITE\$(ruby_version)$STUBBY_LIGHT_BLUE]"                     # Which Ruby
+PS1+="$STUBBY_GREEN($STUBBY_WHITE\$(prompt_git)$STUBBY_GREEN)\$$NONE "       # Git Branch
