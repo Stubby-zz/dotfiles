@@ -42,16 +42,23 @@ style_chars="\[${RESET}${SOLAR_WHITE}\]"
 style_branch="${SOLAR_CYAN}"
 
 
-STUBBY_LIGHT_BLUE="\[\033[1;34m\]"
-STUBBY_BLUE="\[\033[0;34m\]"
-STUBBY_RED="\[\033[0;31m\]"
-STUBBY_LIGHT_RED="\[\033[1;31m\]"
-STUBBY_GREEN="\[\033[0;32m\]"
-STUBBY_LIGHT_GREEN="\[\033[1;32m\]"
-STUBBY_WHITE="\[\033[1;37m\]"
-STUBBY_LIGHT_GRAY="\[\033[0;37m\]"
-STUBBY_BLACK="\[\033[0;30m\]"
-STUBBY_NONE="\[\033[0m\]" 
+LIGHT_BLUE="\[\033[1;34m\]"
+BLUE="\[\033[0;34m\]"
+RED="\[\033[0;31m\]"
+LIGHT_RED="\[\033[1;31m\]"
+GREEN="\[\033[0;32m\]"
+LIGHT_GREEN="\[\033[1;32m\]"
+WHITE="\[\033[1;37m\]"
+LIGHT_GRAY="\[\033[0;37m\]"
+BLACK="\[\033[0;30m\]"
+NONE="\[\033[0m\]" 
+    
+PS1="\n"                                                                        # Begin with a newline
+PS1+="$LIGHT_BLUE[$LIGHT_RED\$(date +%H:%M)$LIGHT_BLUE]"   # Time
+PS1+="$LIGHT_BLUE[$WHITE\W$LIGHT_BLUE]"                    # Working Direcotry
+PS1+="[$WHITE\$(ruby_version)$LIGHT_BLUE]"                        # Which Ruby
+PS1+="$GREEN($WHITE\$(prompt_git)$GREEN)\$$NONE "          # Git Branch
+PS1+="\[${RESET}\]"                                                             # Reset colors
 
 if [[ "$SSH_TTY" ]]; then
     # connected via ssh
@@ -94,29 +101,29 @@ prompt_git() {
 
     # Check for uncommitted changes in the index
     if ! $(git diff --quiet --ignore-submodules --cached); then
-        uc="💡"
+        uc=" 💡 "
     fi
 
     # Check for unstaged changes
     if ! $(git diff-files --quiet --ignore-submodules --); then
-        us="💣"
+        us=" 💬 "
     fi
 
     # Check for untracked files
     if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-        ut="📝"
+        ut=" ⛔ "
     fi
 
     # Check for stashed files
     if $(git rev-parse --verify refs/stash &>/dev/null); then
-        st="📦"
+        st=" 📦 "
     fi
 
     git_state=$uc$us$ut$st
 
     # Combine the branch name and state information
     if [[ $git_state ]]; then
-        git_info="$git_info$git_state "
+        git_info="$git_info$git_state"
     fi
 
     printf "${git_info}"
@@ -131,8 +138,3 @@ function ruby_version {
   local full="$version$gemset"
   [ "$full" != "" ] && echo "$full"
 }
-    
-PS1="$STUBBY_LIGHT_BLUE[$STUBBY_LIGHT_RED\$(date +%H:%M)$STUBBY_LIGHT_BLUE]" # Time
-PS1+="$STUBBY_LIGHT_BLUE[$STUBBY_WHITE\W$STUBBY_LIGHT_BLUE]"                 # Working Direcotry
-PS1+="[$STUBBY_WHITE\$(ruby_version)$STUBBY_LIGHT_BLUE]"                     # Which Ruby
-PS1+="$STUBBY_GREEN($STUBBY_WHITE\$(prompt_git)$STUBBY_GREEN)\$$NONE "       # Git Branch
